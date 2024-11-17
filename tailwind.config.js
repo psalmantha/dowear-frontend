@@ -5,7 +5,14 @@ export default {
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        Onest: ["Onest", "serif"],
+      },
+      colors: {
+        "dowear-red": "#DE0F3F"
+      },
+    },
   },
   plugins: [],
 }
