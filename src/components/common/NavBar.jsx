@@ -6,7 +6,7 @@ import { BsPerson } from 'react-icons/bs';
 
 function NavBar() {
     return (
-        <div className="h-20 px-20 bg-dowear-red">
+        <div className="h-20 md:px-20 px-4 bg-dowear-red">
             <div className="flex items-center h-full max-w-screen-2xl mx-auto w-full">
                 {/* Logo Section */}
                 <div className="w-[14%] min-w-[100px] max-w-[130px] flex-shrink-0 hidden md:block">
@@ -18,7 +18,7 @@ function NavBar() {
                 </div>
 
                 {/* Search Section */}
-                <div className="flex-grow ml-4 mr-10 md:mx-16">
+                <div className="flex-grow mr-5 md:mx-16">
                     <form className="relative w-full flex items-center">
                         <input 
                             type="search" 
