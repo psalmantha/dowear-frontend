@@ -1,3 +1,8 @@
+body {
+  overflow-x: hidden;
+}
+
+/* Footer */
 .list-item {
   margin-bottom: 0.2rem;
   transition: color 0.3s ease;
@@ -14,3 +19,52 @@
   display: inline-block;
 }
 
+/* Homepage main */
+.main-container {
+  width: 70%;
+  margin: 0 auto;
+}
+
+/* Categories component */
+.categories {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 5rem;
+  margin-top: 1.2rem;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+.category {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+  padding-left: 2.5rem;
+  background-color: #f1f1f1;
+  height: 65px;
+  width: 350px;
+  max-width: 100%;
+}
+
+/* Products Display */
+.product-carousel {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  overflow-x: auto;
+  padding: 1rem 0;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.product-carousel::-webkit-scrollbar {
+  display: none; 
+}
+
+.product-carousel > * {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+}
