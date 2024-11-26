@@ -1,8 +1,8 @@
-import { FaLocationDot } from "react-icons/fa6";
-import { FaPhoneFlip } from "react-icons/fa6";
-import { MdEmail } from "react-icons/md";
-import { Link } from "react-router-dom";
-import "../../App.css";
+import { FaLocationDot } from "react-icons/fa6"
+import { FaPhoneFlip } from "react-icons/fa6"
+import { MdEmail } from "react-icons/md"
+import { Link } from "react-router-dom"
+import "../../App.css"
 
 function Footer() {
     return (
@@ -69,7 +69,7 @@ function Footer() {
                 <p className="ml-4 text-xs text-white">© 2024 dowear. All Rights Reserved.</p>
             </div>
         </>
-    );
+    )
 }
 
-export default Footer;
+export default Footer
