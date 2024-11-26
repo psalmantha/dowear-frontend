@@ -1,14 +1,14 @@
-import React from 'react';
-import DowearLogoNav from '../../assets/dowear-logo-nav.svg';
-import { HiOutlineHeart, HiOutlineShoppingCart } from 'react-icons/hi2';
-import { MdSearch } from 'react-icons/md';
-import { BsPerson } from 'react-icons/bs';
+import React from 'react'
+import DowearLogoNav from '../../assets/dowear-logo-nav.svg'
+import { HiOutlineHeart, HiOutlineShoppingCart } from 'react-icons/hi2'
+import { MdSearch } from 'react-icons/md'
+import { BsPerson } from 'react-icons/bs'
 
 function NavBar() {
     return (
-        <div className="h-20 md:px-20 px-4 bg-dowear-red">
-            <div className="flex items-center h-full max-w-screen-2xl mx-auto w-full">
-                {/* Logo Section */}
+        <div className="h-20 px-4 md:px-20 bg-dowear-red fixed top-0 left-0 w-full z-50">
+            <div className="flex items-center h-full w-full max-w-7xl mx-auto">
+                {/* Logo */}
                 <div className="w-[14%] min-w-[100px] max-w-[130px] flex-shrink-0 hidden md:block">
                     <img 
                         src={DowearLogoNav} 
@@ -16,8 +16,7 @@ function NavBar() {
                         className="w-full h-auto"
                     />
                 </div>
-
-                {/* Search Section */}
+                {/* Search Bar */}
                 <div className="flex-grow mr-5 md:mx-16">
                     <form className="relative w-full flex items-center">
                         <input 
@@ -28,20 +27,19 @@ function NavBar() {
                         <MdSearch className="absolute right-3 text-gray-500 text-lg pointer-events-none" />
                     </form>
                 </div>
-
-                {/* Icons and Button Section */}
+                {/* Likes, Cart, Profile, and Sell Buttons */}
                 <div className="flex items-center space-x-4 md:space-x-8">
                     <HiOutlineHeart className="text-white text-xl md:text-2xl" />
                     <HiOutlineShoppingCart className="text-white text-xl md:text-2xl" />
                     <BsPerson className="text-white text-xl md:text-2xl" />
-                    <button className="text-sm md:text-base bg-[#FFDE59] font-semibold py-1 px-4 rounded-lg hover:bg-yellow-400 transition md:px-4">
+                    <button className="text-sm md:text-base bg-[#FFDE59] font-semibold py-1.5 px-4 rounded-2xl hover:bg-yellow-400 transition md:px-5">
                         <span className="md:hidden">+</span>
                         <span className="hidden md:block">+ Sell</span>
                     </button>
                 </div>
             </div>
         </div>
-    );
+    )
 }
 
 export default NavBar
