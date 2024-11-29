@@ -68,3 +68,26 @@ body {
   scroll-snap-align: start;
   flex: 0 0 auto;
 }
+
+/* SellProduct Modal */
+.page-2 {
+  overflow-y: overlay; 
+  max-height: 500px;
+}
+
+.page-2::-webkit-scrollbar {
+  width: 8px;
+}
+
+.page-2::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.page-2::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
+
+.page-2::-webkit-scrollbar-track {
+  background: transparent;
+}
