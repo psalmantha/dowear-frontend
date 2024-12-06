@@ -225,19 +225,19 @@ function SellProduct({ onClose }){
                                 <div className="flex justify-center items-center">
                                     <button
                                         type="button"
+                                        onClick={addVariation}
+                                        className="text-green-500"
+                                    >
+                                        +
+                                    </button>
+                                    <button
+                                        type="button"
                                         onClick={() => removeVariation(index)}
-                                        className={`text-red-500 ${
+                                        className={`text-red-500 ml-2 ${
                                             variations.length === 1 ? "hidden" : ""
                                         }`}
                                     >
                                         -
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={addVariation}
-                                        className="text-green-500 ml-2"
-                                    >
-                                        +
                                     </button>
                                 </div>
                             </div>
