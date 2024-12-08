@@ -1,17 +1,25 @@
 import React, { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import DowearLogoNav from "../../assets/dowear-logo-nav.svg"
 import { HiOutlineHeart, HiOutlineShoppingCart } from "react-icons/hi2"
 import { MdSearch } from "react-icons/md"
 import { BsPerson } from "react-icons/bs"
 import SellProduct from "../product/SellProduct"
+import { useAuth } from '../../context/AuthContext'
 
 function NavBar() {
     const [showSellProduct, setShowSellProduct] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
 
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
+
     const handleSellButtonClick = () => {
-        setShowSellProduct(true);
+        if(user){
+            setShowSellProduct(true);
+        }else{
+            navigate("/login");
+        }
     };
 
     const handleCloseSellProduct = () => {
@@ -19,8 +27,26 @@ function NavBar() {
     };
 
     const handleToggleDropdown = () => {
-        setShowDropdown(!showDropdown);
+        if(user){
+            setShowDropdown(!showDropdown);
+        }else{
+            navigate("/login");
+        }
     };
+
+    const handleNavigate = (path) => {
+        if(user){
+            navigate(path);
+        }else{
+            navigate("/login");
+        }
+    };
+
+    const handleLogout = async () => {
+        await logout();
+        navigate("/login");
+    };
+    
 
     return (
         <>
@@ -64,14 +90,29 @@ function NavBar() {
                                 <div className="absolute -top-2 right-10 w-4 h-4 bg-white border-l border-t border-gray-300 rotate-45"/>
                                     {/* Dropdown Content */}
                                     <ul className="py-1 font-medium">
-                                        <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b">
+                                        <li 
+                                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b"
+                                            onClick={() => handleNavigate('/profile')}
+                                        >
                                             Profile
                                         </li>
-                                        <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b">
+                                        <li 
+                                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b"
+                                            onClick={() => handleNavigate('/profile')} // will change to listings page
+                                        >
                                             Manage Listings
                                         </li>
-                                        <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                                        <li 
+                                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                            onClick={() => handleNavigate('/profile')} // will change to settings page
+                                        >
                                             Settings
+                                        </li>
+                                        <li 
+                                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                            onClick={handleLogout}
+                                        >
+                                            Log Out
                                         </li>
                                     </ul>
                                 </div>
