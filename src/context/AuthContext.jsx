@@ -10,20 +10,22 @@ export const AuthProvider = ({ children }) => {
 
   const fetchSession = async () => {
     try {
-      if (!token) return; // no token, skip fetching session
-  
-      // fetch user profile using token
-      const userProfile = await getUser({ token });
-      setUser(userProfile);
-    } catch (error) {
+      const token = localStorage.getItem('token');
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/users/getUserProfile`, {
+          headers: {
+              Authorization: `Bearer ${token}`,
+          },
+      });
+      setUser(data);
+      console.log(data);
+  } catch (error) {
       console.error('Error fetching session:', error);
-      setUser(null);
-    }
+  }
   };
   
   useEffect(() => {
-    fetchSession();
-  }, []);
+    if(token)fetchSession();
+  }, [token]);
 
   const handleSignup = async (userData) => {
     const data = await signup(userData);
@@ -39,6 +41,7 @@ export const AuthProvider = ({ children }) => {
         credentials
       );
       setUser(data.user);
+      setToken(data.token);
       localStorage.setItem('token', data.token);
     } catch (error) {
       console.error('Login error:', error);
@@ -50,6 +53,7 @@ export const AuthProvider = ({ children }) => {
     try {
       await axios.post(`${import.meta.env.VITE_API_URL}/users/logout`);
       setUser(null);
+      setToken(null);
         localStorage.removeItem('token');
     } catch (error) {
         console.error('Logout error:', error);
