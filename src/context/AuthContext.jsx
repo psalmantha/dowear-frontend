@@ -10,13 +10,17 @@ export const AuthProvider = ({ children }) => {
 
   const fetchSession = async () => {
     try {
-        const response = await axios.get('/api/session');
-        setUser(response.data.user);
+      if (!token) return; // no token, skip fetching session
+  
+      // fetch user profile using token
+      const userProfile = await getUser({ token });
+      setUser(userProfile);
     } catch (error) {
-        setUser(null);
+      console.error('Error fetching session:', error);
+      setUser(null);
     }
   };
-
+  
   useEffect(() => {
     fetchSession();
   }, []);
@@ -44,8 +48,8 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-        await axios.post(`${import.meta.env.VITE_API_URL}/users/logout`);
-        setUser(null);
+      await axios.post(`${import.meta.env.VITE_API_URL}/users/logout`);
+      setUser(null);
         localStorage.removeItem('token');
     } catch (error) {
         console.error('Logout error:', error);
