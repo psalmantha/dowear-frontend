@@ -3,22 +3,22 @@
 @import "tailwindcss/utilities";
 
 :root {
-  --font-family-primary: 'Onest', serif; /* Define a CSS variable for the primary font */
-  --line-height: 1.5;                   /* Optional for reusability */
-  --font-weight: 400;                   /* Optional for reusability */
+  font-family: Onest, serif;
+  line-height: 1.5;
+  font-weight: 400;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  font-family: var(--font-family-primary); /* Apply the variable globally */
+  font-family: var(--font-family-primary);
   line-height: var(--line-height);
   font-weight: var(--font-weight);
 }
 
-body {
+/* body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-}
+} */
