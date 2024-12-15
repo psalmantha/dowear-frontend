@@ -11,17 +11,28 @@ export const AuthProvider = ({ children }) => {
   const fetchSession = async () => {
     try {
       const token = localStorage.getItem('token');
+      if (!token) {
+        setUser(null);
+        return;
+      }
+  
       const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/users/getUserProfile`, {
-          headers: {
-              Authorization: `Bearer ${token}`,
-          },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       setUser(data);
-      console.log(data);
-  } catch (error) {
+    } catch (error) {
       console.error('Error fetching session:', error);
-  }
+
+      if (error.response?.status === 401) {
+        alert('Your session has expired. Please log in again.');
+      }
+      
+      setUser(null);
+    }
   };
+  
   
   useEffect(() => {
     if(token)fetchSession();
