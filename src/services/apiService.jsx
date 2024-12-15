@@ -31,3 +31,31 @@ export const login = async (credentials) => {
     throw error.response ? error.response.data : error.message;
   }
 };
+
+export const createProduct = async (formData, token) => {
+  try {
+    console.log("Sending token to backend:", token);
+
+    const response = await axios.post(`${import.meta.env.VITE_API_URL}/products/addProduct`, formData, {
+      headers: { 
+          "Content-Type": "multipart/form-data",
+          'Authorization': `Bearer ${token}`,
+          api_key: '214348456511783'
+
+      },
+    });
+    console.log(response);
+    return response.data;
+  } catch (error) {
+    console.error('Error adding product:', error.response?.data || error.message);
+  
+    if (error.response?.status === 401) {
+      alert('Your session has expired. Please log in again.');
+    }
+
+    throw error;
+  }
+};
+
+
+
