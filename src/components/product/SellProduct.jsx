@@ -1,51 +1,54 @@
 import React, { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { useAuth } from '../../context/AuthContext'
+import { createProduct } from '../../services/apiService'
 import { PiDressLight, PiShirtFoldedLight, PiFlowerLotusLight } from "react-icons/pi"
 import { GiDiamondRing, GiSmartphone } from "react-icons/gi"
 import { LiaHomeSolid } from "react-icons/lia"
 import "../../App.css"
 
 function SellProduct({ onClose }){
+    const navigate = useNavigate();
+    const { token } = useAuth();
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [variations, setVariations] = useState([{ variation: "", quantity: "", price: "" }]);
     const [productName, setProductName] = useState("");
     const [description, setDescription] = useState("");
+    const [tags, setTags] = useState("");
     const [showErrors, setShowErrors] = useState(false);
+    const [image, setImage] = useState(null);
 
-    const goToNextPage = () => setCurrentPage((prev) => prev + 1);
+    const goToNextPage = () => {
+        console.log('Selected Category:', selectedCategory);
+        setCurrentPage((prev) => prev + 1);
+    }
     const goToPreviousPage = () => setCurrentPage((prev) => prev - 1);
 
     const categories = [
-        { icon: <PiDressLight className="text-4xl" />, label: "Women's Fashion" },
-        { icon: <PiShirtFoldedLight className="text-4xl" />, label: "Men's Fashion" },
-        { icon: <PiFlowerLotusLight className="text-4xl" />, label: "Beauty & Personal Care" },
-        { icon: <GiDiamondRing className="text-4xl" />, label: "Jewelry & Accessories" },
-        { icon: <LiaHomeSolid className="text-4xl" />, label: "Home & Furniture" },
-        { icon: <GiSmartphone className="text-4xl" />, label: "Gadgets & Electronics" },
+        { id: 1, icon: <PiDressLight className="text-4xl" />, label: "Women's Fashion" },
+        { id: 2, icon: <PiShirtFoldedLight className="text-4xl" />, label: "Men's Fashion" },
+        { id: 3, icon: <PiFlowerLotusLight className="text-4xl" />, label: "Beauty & Personal Care" },
+        { id: 4, icon: <GiDiamondRing className="text-4xl" />, label: "Jewelry & Accessories" },
+        { id: 5, icon: <LiaHomeSolid className="text-4xl" />, label: "Home & Furniture" },
+        { id: 6, icon: <GiSmartphone className="text-4xl" />, label: "Gadgets & Electronics" },
     ];
 
-    const handleCategoryClick = (label) => {
-        setSelectedCategory(label);
+    const handleCategoryClick = (id) => {
+        setSelectedCategory(id);
     };
 
     const handleVariationChange = (index, field, value) => {
-        const newVariations = [...variations];
-
-        if(field === "quantity"){
-            const intValue = parseInt(value, 10);
-            if(!value || (!isNaN(intValue) && intValue > 0)){
-                newVariations[index][field] = value; // to allow clearing or valid positive int
-            }
-        }else if(field === "price"){
-            const floatValue = parseFloat(value);
-            if(!value || (!isNaN(floatValue) && floatValue > 0)){
-                newVariations[index][field] = value; // to allow clearing or valid positive float
-            }
-        }else{
-            newVariations[index][field] = value;
+        const updated = [...variations];
+        if (field === "quantity" || field === "price") {
+          const parsedValue = field === "quantity" ? parseInt(value, 10) : parseFloat(value);
+          updated[index][field] = !isNaN(parsedValue) && parsedValue > 0 ? value : "";
+        } else {
+          updated[index][field] = value;
         }
-        setVariations(newVariations);
-    }
+        setVariations(updated);
+    };
+    
 
     const addVariation = () => {
         setVariations([...variations, { variation: "", quantity: "", price: "" }]);
@@ -58,20 +61,60 @@ function SellProduct({ onClose }){
         }
     }
 
-    const handleSubmit = () => {
-        const hasEmptyFields =
-            !selectedCategory ||
-            !productName.trim() ||
-            !description.trim() ||
-            variations.some((v) => !v.variation.trim() || !v.quantity || !v.price);
-
-        if(hasEmptyFields){
-            setShowErrors(true);
-        }else{
-            console.log("Form submitted successfully!");
-            onClose();
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+          const maxFileSize = 2 * 1024 * 1024; // 2MB
+          if (!validTypes.includes(file.type)) return alert("Please upload a valid image (JPG, PNG).");
+          if (file.size > maxFileSize) return alert("File size exceeds 2MB.");
+          setImage(file);
         }
-    }
+    };
+      
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        
+        const hasEmptyFields = 
+          !selectedCategory || 
+          !productName.trim() || 
+          !description.trim() || 
+          variations.some((v) => !v.variation.trim() || !v.quantity || !v.price) ||
+          !tags.trim() || !image;
+      
+        if (hasEmptyFields) {
+          setShowErrors(true);
+          return;
+        }
+      
+        try {
+          const productData = {
+            categoryID: selectedCategory,
+            title: productName.trim(),
+            description: description.trim(),
+            tags: tags.split(/\s+/).filter(Boolean),
+            variations,
+          };
+      
+          const formData = new FormData();
+          formData.append("productData", JSON.stringify(productData));
+          if (image) formData.append("image", image);
+          if (!image) console.error("Image is missing!");
+          
+          for (let [key, value] of formData.entries()) {
+            console.log(key, value);
+          }
+        
+          const response = await createProduct(formData, token);
+          console.log("Product created:", response);
+          onClose();
+          navigate('/profile');
+        } catch (error) {
+          console.error("Failed to list product:", error); 
+        }
+      };
+      
 
     return (
         <div className="fixed top-0 left-0 w-screen h-screen bg-white bg-opacity-30 z-50 flex items-center justify-center">
@@ -91,15 +134,15 @@ function SellProduct({ onClose }){
                         Select a Category
                     </h3>
                     <div className="grid grid-cols-3 gap-4">
-                        {categories.map((category, index) => (
+                        {categories.map((category) => (
                             <button
-                                key={index}
+                                key={category.id}
                                 className={`flex flex-col items-center justify-center h-24 rounded-xl border ${
-                                    selectedCategory === category.label
+                                    selectedCategory === category.id
                                     ? "bg-[#dedede]"
                                     : "bg-[#f3f3f3] hover:bg-[#dedede]"
                                 }`}
-                                onClick={() => handleCategoryClick(category.label)}
+                                onClick={() => handleCategoryClick(category.id)}
                             >
                                 {category.icon}
                                 <span className="text-sm font-medium mt-2">
@@ -155,6 +198,31 @@ function SellProduct({ onClose }){
                                     showErrors && !description.trim() ? "border-red-500" : ""
                                 }`}
                                 placeholder="Enter product description"
+                            />
+                        </label>
+
+                        <label className="block mb-3">
+                            Tags
+                            <input
+                                type="text"
+                                value={tags}
+                                onChange={(e) => setTags(e.target.value)}
+                                className={`font-regular w-full px-3 py-2 border rounded-md ${
+                                    showErrors && !tags.trim() ? "border-red-500" : ""
+                                }`}
+                                placeholder="Enter tags (separated by space)"
+                            />
+                        </label>
+
+
+                        {/* img upload */}
+                        <label className="block mb-3">
+                            Product Image
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                                className="w-full px-3 py-2 border rounded-md"
                             />
                         </label>
 
@@ -237,7 +305,7 @@ function SellProduct({ onClose }){
                                             variations.length === 1 ? "hidden" : ""
                                         }`}
                                     >
-                                        -
+                                        &ndash;
                                     </button>
                                 </div>
                             </div>
