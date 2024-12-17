@@ -72,6 +72,17 @@ function SellProduct({ onClose }){
         }
     };
       
+    const handlePostProduct = async (formData) => {
+        try {
+            const response = await createProduct(formData, token);
+            console.log('Product successfully posted:', response);
+            
+            onClose();
+            navigate('/profile');
+        } catch (error) {
+            console.error('Error posting product:', error);
+        }
+    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -82,12 +93,12 @@ function SellProduct({ onClose }){
           !description.trim() || 
           variations.some((v) => !v.variation.trim() || !v.quantity || !v.price) ||
           !tags.trim() || !image;
-      
+
         if (hasEmptyFields) {
           setShowErrors(true);
           return;
         }
-      
+    
         try {
           const productData = {
             categoryID: selectedCategory,
@@ -96,25 +107,24 @@ function SellProduct({ onClose }){
             tags: tags.split(/\s+/).filter(Boolean),
             variations,
           };
-      
+    
+        //   console.log('Product Data:', productData);
+
           const formData = new FormData();
           formData.append("productData", JSON.stringify(productData));
           if (image) formData.append("image", image);
-          if (!image) console.error("Image is missing!");
+          await handlePostProduct(formData);
+        //   const response = await createProduct(formData, token);
+        //   console.log("Product created:", response);
           
-          for (let [key, value] of formData.entries()) {
-            console.log(key, value);
-          }
         
-          const response = await createProduct(formData, token);
-          console.log("Product created:", response);
-          onClose();
-          navigate('/profile');
+        //   onClose();
+        //   navigate('/profile');
         } catch (error) {
           console.error("Failed to list product:", error); 
         }
-      };
-      
+    };
+    
 
     return (
         <div className="fixed top-0 left-0 w-screen h-screen bg-white bg-opacity-30 z-50 flex items-center justify-center">
@@ -165,7 +175,7 @@ function SellProduct({ onClose }){
 
                 {currentPage === 2 && (
                 <div className="page-2 overflow-y-auto max-h-[500px] pr-4">
-                    <form>
+                    <form onSubmit={handlePostProduct}>
                         <label className="block mb-3">
                             Category
                             <input
