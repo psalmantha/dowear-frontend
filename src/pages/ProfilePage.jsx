@@ -2,26 +2,42 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import NavBar from '../components/common/NavBar'
 import Footer from '../components/common/Footer'
+import ProductList from '../components/product/ProductList'
+import { getUserProducts } from '../services/apiService'
 import { useAuth } from '../context/AuthContext'
 import { FaLocationDot } from "react-icons/fa6"
 import { HiMiniStar } from "react-icons/hi2"
 
 function ProfilePage(){
-    const { user } = useAuth();
     const navigate = useNavigate();
+    const { user, token } = useAuth();
+    const [products, setProducts] = useState([]);
     const [activeSection, setActiveSection] = useState('listings');
 
+    const fetchProducts = async () => {
+        try {
+            const data = await getUserProducts(token);
+            console.log('Fetched products:', data);
+            setProducts(data);
+        } catch (err) {
+            console.error('Error fetching user products:', err);
+            setProducts([]);
+        }
+    };
+
     useEffect(() => {
-      if (!user) {
-          navigate('/login');
-      }
-  }, [user]);
+        fetchProducts();
+    }, [token]);
+
+    const handleProductPosted = () => {
+        fetchProducts();
+    };
 
     return(
         <>
          <div className="flex flex-col min-h-screen w-screen">
             <NavBar/>
-            <div className="relative mb-32"> {/* will fix mb */}
+            <div className="relative mb-32">
                 <div className="bg-[#F7F7F7] h-60"/>
                 <div className="absolute flex items-center top-full left-32 transform -translate-y-1/3 z-10">
                         <div className="bg-[#D9D9D9] rounded-full h-48 w-48" />
@@ -76,15 +92,25 @@ function ProfilePage(){
               {/* horizontal line */}
               <div className="mt-2 border-t-2 border-gray-300 w-screen" />
               {/* conditionally render content */}
-              <div className="mt-6">
-                  {activeSection === 'listings' ? (
-                      <p className="text-center text-lg">No Listings yet</p>
-                  ) : (
-                      <p className="text-center text-lg">No Ratings yet</p>
-                  )}
+              <div className="mt-6 px-10 flex-grow mb-6">
+
+                {activeSection === 'listings' ? (
+
+                    products.length > 0 ? (
+                        <div className="grid grid-cols-5 gap-x-6 gap-y-4 px-20">
+                            {products.map((product) => (
+                                <ProductList key={product.productID} product={product} onProductPosted={handleProductPosted} /> // product.id
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-center text-lg">No Listings yet!</p>
+                    ) 
+                ) : (
+                        <p className="text-center text-lg">No Ratings yet</p>
+                )}
               </div>
             </div>
-            <Footer/>
+        <Footer/>
         </div>
         </>
     )
