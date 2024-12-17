@@ -1,14 +1,39 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
 import NavBar from '../components/common/NavBar'
 import Footer from '../components/common/Footer'
 import Categories from '../components/product/Categories'
 import HomeBanner from '../components/common/HomeBanner'
 import ProductList from '../components/product/ProductList'
+import { getUserProducts } from '../services/apiService'
+import { useAuth } from '../context/AuthContext'
 import { MdKeyboardArrowRight } from "react-icons/md"
-
 import '../App.css'
 
-function HomePage() {
+function HomePage(){
+    const { token } = useAuth();
+    const [featuredProducts, setFeaturedProducts] = useState([]);
+    const [newProducts, setNewProducts] = useState([]);
+
+    const fetchProducts = async () => {
+        try {
+            const allProducts = await getUserProducts(token);
+
+            const featured = allProducts.slice(0, 6);
+            const recent = allProducts.slice(-6);
+
+            setFeaturedProducts(featured);
+            setNewProducts(recent);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            setFeaturedProducts([]);
+            setNewProducts([]);
+        }
+    };
+
+    useEffect(() => {
+        fetchProducts();
+    }, [token]);
+
     return (
         <>
         <div className="flex flex-col min-h-screen w-screen">
@@ -31,14 +56,13 @@ function HomePage() {
                     </div>
                     {/* Horizontal scrolling carousel */}
                     <div className="product-carousel">
-                        {/* Will dynamically handle data here after connecting to backend */}
-                        <ProductList/>
-                        <ProductList/>
-                        <ProductList/>
-                        <ProductList/>
-                        <ProductList/>
-                        <ProductList/>
-                        <ProductList/>
+                        {featuredProducts.length > 0 ? (
+                            featuredProducts.map((product) => (
+                                <ProductList key={product.productID} product={product}/>
+                            ))
+                        ) : (
+                            <p>No Featured Products</p>
+                        )}
                     </div>
                 </div>
 
@@ -50,14 +74,13 @@ function HomePage() {
                     </div>
                     {/* Horizontal scrolling carousel */}
                     <div className="product-carousel">
-                        {/* Will dynamically handle data here after connecting to backend */}
-                        <ProductList/>
-                        <ProductList/>
-                        <ProductList/>
-                        <ProductList/>
-                        <ProductList/>
-                        <ProductList/>
-                        <ProductList/>
+                        {newProducts.length > 0 ? (
+                            newProducts.map((product) => (
+                                <ProductList key={product.productID} product={product} />
+                            ))
+                        ) : (
+                            <p>No New Products</p>
+                        )}
                     </div>
                 </div>
             </main>
