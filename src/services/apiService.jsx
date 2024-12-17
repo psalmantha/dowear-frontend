@@ -35,6 +35,7 @@ export const login = async (credentials) => {
 export const createProduct = async (formData, token) => {
   try {
     console.log("Sending token to backend:", token);
+    console.log('Payload being sent:', formData);
 
     const response = await axios.post(`${import.meta.env.VITE_API_URL}/products/addProduct`, formData, {
       headers: { 
@@ -57,5 +58,42 @@ export const createProduct = async (formData, token) => {
   }
 };
 
+export const getUserProducts = async (token) => {
+  try {
+      const response = await api.get('/products/userProducts', {
+          headers: {
+              Authorization: `Bearer ${token}`,
+          },
+      });
+      return response.data.products || [];
+    } catch (error) {
+      console.error('Error fetching user products:', error.response?.data || error.message);
+      return [];
+  }
+};
 
+export const getProductsByCategory = async (catID) => {
+  try {
+      const response = await api.get(`/products/category/${catID}`);
+      console.log(response.data);
+      return response.data;
+  } catch (error) {
+      console.error("Error fetching products by category:", error);
+      throw error;
+  }
+};
 
+export const addToCart = async (cartData) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await api.post('/cart/add', cartData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error adding to cart:', error.response?.data || error.message);
+    throw error;
+  }
+};
